@@ -3,78 +3,86 @@ package lindenmayer;
 import java.awt.geom.Point2D;
 import java.util.Stack;
 
-/* 1.Classe bidon avec l'interface Turtle qui suit les états correctement, mais ne dessine rien en vérité.
+/* 1.Classe bidon avec l'interface Turtle qui suit les ï¿½tats correctement, mais ne dessine rien en vï¿½ritï¿½.
  * Par Maxime Ton et Pierre-Olivier Tremblay
- * Matricule: 20143044 et _____________
+ * Matricule: 20143044 et 20049076
  */
-public class RunTurtle implements Turtle 
-{
-	//Pile que l'on va utiliser pour les instruction push et pop;
+public class RunTurtle implements Turtle {
+	// Pile que l'on va utiliser pour les instruction push et pop;
 	Stack<State> pile = new Stack<State>();
-	//Instance du state activement utilisé;
+	// Instance du state activement utilisï¿½;
 	State active;
-	
-	//Classe interne qui permet d'encapsuler l'état;
+
+	// Classe interne qui permet d'encapsuler l'ï¿½tat;
 	public class State {
-		//Position du nez de la tortue.
+		// Position du nez de la tortue.
 		Point2D position;
-		//Angle de la tortue en degrés.
+		// Angle de la tortue en degrï¿½s.
 		double angle_degree;
+
 		public State(Point2D pos, double angle) {
 			this.position = pos;
 			this.angle_degree = angle;
 		}
 	}
-	
-	//On implémente la méthode draw;
+
+	// On implï¿½mente la mï¿½thode draw;
 	public void draw() {
 		double angle_rad = Math.toRadians(active.angle_degree);
-		active.position.setLocation(active.position.getX() + Math.cos(angle_rad), active.position.getY() + Math.asin(angle_rad));
-		//Draw line;
+		active.position.setLocation(active.position.getX() + Math.cos(angle_rad),
+				active.position.getY() + Math.asin(angle_rad));
+		// Draw line;
 	}
-	//On implémente la méthode move;
+
+	// On implï¿½mente la mï¿½thode move;
 	public void move() {
 		double angle_rad = Math.toRadians(active.angle_degree);
-		active.position.setLocation(active.position.getX() + Math.cos(angle_rad), active.position.getY() + Math.asin(angle_rad));
+		active.position.setLocation(active.position.getX() + Math.cos(angle_rad),
+				active.position.getY() + Math.asin(angle_rad));
 	}
-	//On implémente la méthode turnR;
-    public void turnR() {
-    	active.angle_degree += -45;
-    }
-    //On implémente la méthode turnL;
-    public void turnL() {
-    	active.angle_degree += 45;
-    }
-    //On implémente la méthode push;
-    public void push() {
-    	State temp = active;
-    	pile.push(temp);
-    }
-    //On implémente la méthode pop;
-    public void pop() {
-    	State temp = (State)pile.pop();
-    	active = temp;
-    }
-    //On implémente la méthode stay;
-    public void stay() {
-    	//Do nothing;
-    }
-    
-    public void init(Point2D pos, double angle_deg) {
-    	active = new State(pos, angle_deg);
-    	active.position.setLocation(0,0);
-    	active.angle_degree = 0;
-    }
-    
-    public Point2D getPosition() {
-    	return active.position;
-    }
 
-    public double getAngle() {
-    	return active.angle_degree;
-    }
+	// On implï¿½mente la mï¿½thode turnR;
+	public void turnR() {
+		active.angle_degree += -45;
+	}
 
-    public void setUnits(double step, double delta) {
-    	
-    }
+	// On implï¿½mente la mï¿½thode turnL;
+	public void turnL() {
+		active.angle_degree += 45;
+	}
+
+	// On implï¿½mente la mï¿½thode push;
+	public void push() {
+		State temp = active;
+		pile.push(temp);
+	}
+
+	// On implï¿½mente la mï¿½thode pop;
+	public void pop() {
+		State temp = (State) pile.pop();
+		active = temp;
+	}
+
+	// On implï¿½mente la mï¿½thode stay;
+	public void stay() {
+		// Do nothing;
+	}
+
+	public void init(Point2D pos, double angle_deg) {
+		active = new State(pos, angle_deg);
+		active.position.setLocation(0, 0);
+		active.angle_degree = 0;
+	}
+
+	public Point2D getPosition() {
+		return active.position;
+	}
+
+	public double getAngle() {
+		return active.angle_degree;
+	}
+
+	public void setUnits(double step, double delta) {
+
+	}
 }

@@ -100,7 +100,7 @@ public class Plotter {
         int n_iter = Integer.parseInt(args[arg_idx++]);
 
         this.lsystem = new LSystem();
-        this.turtle = new EPSTurtle(new GhostTurtle(), out);
+        this.turtle = new EPSTurtle(new RunTurtle(), out);
 
         JSONObject params = new JSONObject(new JSONTokener(new java.io.FileReader(json_file)));
         parseLSystem(params);
