@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.awt.geom.Rectangle2D;
 
 public class LSystem extends AbstractLSystem {
 	public List<Symbol> alphabet = new ArrayList<Symbol>();
