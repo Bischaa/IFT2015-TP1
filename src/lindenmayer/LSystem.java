@@ -7,22 +7,38 @@ import java.util.List;
 import java.awt.geom.Rectangle2D;
 
 public class LSystem extends AbstractLSystem {
-	public List<Symbol> alphabet = new ArrayList<Symbol>();
+	public List<Symbol> alphabet = new ArrayList<Symbol>(); // Liste contenant l'alphabet
+	public HashMap<Symbol, List<String>> regles = new HashMap<Symbol, List<String>>(); // Contient les règles (symbol
+																						// -> [R1,R2,...])
+	public HashMap<Character, Symbol> charToSym = new HashMap<Character, Symbol>(); // Lien entre Symbol et charactère
 
-	// M�thode addSymbol;
+	// Méthode addSymbol;
 	public Symbol addSymbol(char sym) {
-		Symbol temp = new Symbol();
-		HashMap<Character, Symbol> charMap = new HashMap<Character, Symbol>();
-		charMap.put(sym, temp);
+		Symbol temp = new Symbol(sym);
+		charToSym.put(sym, temp); // Ajoute le lien charactère -> symbole
+		alphabet.add(temp); // Ajoute le symbole à l'alphabet
 		return temp;
 	}
 
-	// M�thode addRule;
+	// Méthode addRule;
 	public void addRule(Symbol sym, String expansion) {
-		alphabet.add(sym);
+		// Ajouter la règle à au tableau de référence
+
+		// Vérifie si regles contient des relations pour sym
+		if (regles.containsKey(sym)) {
+			// Si oui, cela signifie qu'il y a une liste d'instanciée
+			regles.get(sym).add(expansion); // Ajoute l'expansion aux règles reliées à ce symbole
+		}
+
+		else {
+			// Si non, on instancie et ajoute le relation sym -> liste de règles
+			List<String> newList = new ArrayList<String>();
+			newList.add(expansion);
+			regles.put(sym, newList);
+		}
 	}
 
-	// M�thde addAction;
+	// Méthde addAction;
 	public void setAction(Symbol sym, String action) {
 
 	}

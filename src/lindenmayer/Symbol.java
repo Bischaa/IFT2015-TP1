@@ -16,11 +16,17 @@
 package lindenmayer;
 
 /**
- * Symbol in an L-system's alphabet. 
+ * Symbol in an L-system's alphabet.
  * 
  * @author Mikl&oacute;s Cs&#369;r&ouml;s
  */
-public class Symbol 
-{
-    // A COMPLETER
+public class Symbol {
+    // Attributs
+    protected char sym;
+
+    // Constructeur
+    Symbol(char sym) {
+        this.sym = sym;
+    }
+
 }
