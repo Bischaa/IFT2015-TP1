@@ -5,40 +5,58 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public class LSystem extends AbstractLSystem
-{
+public class LSystem extends AbstractLSystem {
 	public List<Symbol> alphabet = new ArrayList<Symbol>();
-	
-	//Méthode addSymbol;
+
+	// Mï¿½thode addSymbol;
 	public Symbol addSymbol(char sym) {
 		Symbol temp = new Symbol();
-		HashMap<Character,Symbol> charMap = new HashMap<Character,Symbol>();
-		charMap.put(sym,temp);
+		HashMap<Character, Symbol> charMap = new HashMap<Character, Symbol>();
+		charMap.put(sym, temp);
 		return temp;
 	}
-	
-	//Méthode addRule;
+
+	// Mï¿½thode addRule;
 	public void addRule(Symbol sym, String expansion) {
 		alphabet.add(sym);
 	}
 
-	//Méthde addAction;
+	// Mï¿½thde addAction;
 	public void setAction(Symbol sym, String action) {
-		
+
 	}
-	
-	//Méthode getAxiom;
+
+	// Mï¿½thode getAxiom;
 	public Iterator<Symbol> getAxiom() {
-		
+		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
 	}
-	
-	//Méthode rewrite;
+
+	// MÃ©thode setAxiom
+	public void setAxiom(String str) {
+
+	}
+
+	// Mï¿½thode rewrite;
 	public Iterator<Symbol> rewrite(Symbol sym) {
-		
+		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
 	}
-	
-	//Méthode tell;
+
+	// Mï¿½thode tell;
+	public void tell(Turtle turtle, Symbol sym, int rounds) {
+
+	}
+
+	// MÃ©thode tell
 	public void tell(Turtle turtle, Symbol sym) {
-		
+	}
+
+	// MÃ©thode apply rule
+	public Iterator<Symbol> applyRules(Iterator<Symbol> seq, int n) {
+		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
+	}
+
+	// MÃ©thode getBoundingBox
+	public Rectangle2D getBoundingBox(Turtle turtle, Iterator<Symbol> seq, int n) {
+		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
 	}
 }
