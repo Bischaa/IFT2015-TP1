@@ -177,6 +177,22 @@ public class LSystem extends AbstractLSystem {
 
 			// RENDU-LÀ On doit faire les associations sym->action, sym->règles
 
+			// Pour les règles
+			JSONArray letterRules = rules.getJSONArray(letter);
+			if (letterRules != null) { // S'il y a une correspondance pour les règles
+				for (int j = 0; j < letterRules.length(); j++) {
+					system.addRule(sym, letterRules.getString(i)); // Ajoute la règle
+				}
+			}
+
+			// Pour les actions
+			try {
+				system.setAction(sym, actions.getString(letter)); // Fait l'association sym->action
+
+			} catch (NullPointerException e) {
+				// Ne rien faire s'il n'y a pas de correspondance
+			}
+
 		}
 
 	}
