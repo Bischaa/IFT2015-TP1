@@ -16,7 +16,6 @@
 package lindenmayer;
 
 import java.awt.geom.Point2D;
-import java.util.List;
 import java.awt.geom.Rectangle2D;
 import java.io.PrintStream;
 import java.util.Iterator;
@@ -57,7 +56,7 @@ public class EPSTurtle implements Turtle {
 
     public void plot(LSystem lsystem, int n_iter) {
         ghost.push(); // save its position for computing BoundingBox
-        List<Symbol> axiom = lsystem.getAxiom();
+        Iterator<Symbol> axiom = lsystem.getAxiom();
         while (axiom.hasNext()) {
             Symbol s = axiom.next();
             lsystem.tell(this, s, n_iter);

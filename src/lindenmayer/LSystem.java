@@ -5,6 +5,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.Point2D;
+import java.awt.Point;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class LSystem extends AbstractLSystem {
 	protected ArrayList<Symbol> alphabet = new ArrayList<Symbol>(); // Liste contenant l'alphabet
@@ -144,6 +150,33 @@ public class LSystem extends AbstractLSystem {
 		default: // stay action
 			turtle.stay();
 			break;
+		}
+
+	}
+
+	public static void readJSONFile(String filename, LSystem system, Turtle turtle)
+			throws java.io.IOException, org.json.JSONException {
+		JSONObject input = new JSONObject(new JSONTokener(new java.io.FileReader(filename))); // lecture de fichier JSON
+																								// avec JSONTokener
+		JSONArray alphabet = input.getJSONArray("alphabet"); // Tableau de l'alphabet
+		String axiom = input.getString("axiom");
+		JSONObject rules = input.getJSONObject("rules"); // Objet des règles
+		JSONObject actions = input.getJSONObject("actions"); // Objet des actions
+		JSONObject params = input.getJSONObject("parameters"); // Objet des paramètres
+
+		turtle.setUnits(params.getDouble("step"), params.getDouble("angle")); // Initialisation des unités
+
+		// Initialisation du point et de l'angle de départ de la tortue
+		double[] start = (double[]) input.get("start");
+		turtle.init((Point2D) new Point((int) start[0], (int) start[1]), start[2]);
+
+		system.setAxiom(axiom); // On place l'axiom dans le système
+		for (int i = 0; i < alphabet.length(); i++) {
+			String letter = alphabet.getString(i);
+			Symbol sym = system.addSymbol(letter.charAt(0)); // Ajout à l'alphabet
+
+			// RENDU-LÀ On doit faire les associations sym->action, sym->règles
+
 		}
 
 	}
