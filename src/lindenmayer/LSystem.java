@@ -4,17 +4,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.awt.geom.Rectangle2D;
 
 public class LSystem extends AbstractLSystem {
-	protected List<Symbol> alphabet = new ArrayList<Symbol>(); // Liste contenant l'alphabet
-	protected HashMap<Symbol, List<String>> regles = new HashMap<Symbol, List<String>>(); // Contient les règles (symbol
-																							// -> [R1,R2,...])
+	protected ArrayList<Symbol> alphabet = new ArrayList<Symbol>(); // Liste contenant l'alphabet
+	protected HashMap<Symbol, ArrayList<Iterator<Symbol>>> regles = new HashMap<Symbol, ArrayList<Iterator<Symbol>>>(); // Contient
+																														// les
+																														// règles
+																														// (symbol
+																														// ->
+																														// [R1,R2,...])
 	protected HashMap<Character, Symbol> charToSym = new HashMap<Character, Symbol>(); // Lien entre Symbol et
 																						// charactère
 	protected HashMap<Symbol, String> symToAction = new HashMap<Symbol, String>(); // Lien entre un symbol et une action
-	private Iterator<Symbol> axiom; // Chaîne de départ (première règle de la
-									// grammaire)
+	private ArrayList<Symbol> axiom = new ArrayList<Symbol>(); // Chaîne de départ
+
+	// Méthode de conversion de string à iterator
+	public Iterator<Symbol> stringToIterator(String str) {
+		ArrayList<Symbol> symTab = new ArrayList<Symbol>();
+
+		for (int i = 0; i < str.length(); i++) {
+			symTab.add(charToSym.get(str.charAt(i))); // Ajoute le symbol
+		}
+
+		return symTab.iterator();
+	}
 
 	// Méthode addSymbol;
 	public Symbol addSymbol(char sym) {
@@ -31,13 +46,13 @@ public class LSystem extends AbstractLSystem {
 		// Vérifie si regles contient des relations pour sym
 		if (this.regles.containsKey(sym)) {
 			// Si oui, cela signifie qu'il y a une liste d'instanciée
-			this.regles.get(sym).add(expansion); // Ajoute l'expansion aux règles reliées à ce symbole
+			this.regles.get(sym).add(stringToIterator(expansion)); // Ajoute l'expansion aux règles reliées à ce symbole
 		}
 
 		else {
 			// Si non, on instancie et ajoute le relation sym -> liste de règles
-			List<String> newList = new ArrayList<String>();
-			newList.add(expansion);
+			ArrayList<Iterator<Symbol>> newList = new ArrayList<Iterator<Symbol>>();
+			newList.add(stringToIterator(expansion));
 			this.regles.put(sym, newList);
 		}
 	}
@@ -50,7 +65,7 @@ public class LSystem extends AbstractLSystem {
 
 	// Méthode getAxiom;
 	public Iterator<Symbol> getAxiom() {
-		return this.axiom; // Retourne l'axiom
+		return this.axiom.iterator(); // Retourne l'axiom
 	}
 
 	// Méthode setAxiom
@@ -64,12 +79,31 @@ public class LSystem extends AbstractLSystem {
 				newList.add(new Symbol(inStr)); // Ajoute seulement si c'est une lettre
 		}
 
-		this.axiom = newList.iterator();
+		this.axiom = newList;
 	}
 
 	// Méthode rewrite;
 	public Iterator<Symbol> rewrite(Symbol sym) {
-		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
+
+		int numRules = this.regles.get(sym).size();
+
+		if (!this.regles.containsKey(sym)) {
+			return null; // Retourne null si aucune règle reliée à ce symbole
+		}
+
+		else if (numRules == 0) { // Vérifie si aucune règle reliée
+			return null;
+		}
+
+		else if (numRules == 1) { // Vérifie s'il y a une seule règle
+			return this.regles.get(sym).get(0);
+		}
+
+		else { // Sinon il y a plusieurs règles reliées à sym
+			Random rnd = new Random();
+			return this.regles.get(sym).get(rnd.nextInt(numRules)); // Retoune une règle aléatoirement
+
+		}
 	}
 
 	// M�thode tell;
