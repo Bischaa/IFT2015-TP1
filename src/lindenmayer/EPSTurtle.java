@@ -16,54 +16,49 @@
 package lindenmayer;
 
 import java.awt.geom.Point2D;
+import java.util.List;
 import java.awt.geom.Rectangle2D;
 import java.io.PrintStream;
 import java.util.Iterator;
 
 /**
  *
- * Encapsulated PostScript output following 
- * a "ghost turtle".  
+ * Encapsulated PostScript output following a "ghost turtle".
  * 
  * 
  * 
  * @author Mikl&oacute;s Cs&#369;r&ouml;s
  */
-public class EPSTurtle implements Turtle 
-{
+public class EPSTurtle implements Turtle {
     private final Turtle ghost;
     private final PrintStream out;
-    
+
     /**
-     * Writes to standard output. 
+     * Writes to standard output.
      * 
-     * @param ghost turtle following coordinates 
+     * @param ghost turtle following coordinates
      */
-    public EPSTurtle(Turtle ghost)
-    {
+    public EPSTurtle(Turtle ghost) {
         this(ghost, System.out);
     }
-    
+
     /**
      * Instantiation, also prints EPS header.
      * 
      * @param ghost turtle for following coordinates and drawing
-     * @param out where to write the PostScript output
+     * @param out   where to write the PostScript output
      */
-    public EPSTurtle(Turtle ghost, PrintStream out)
-    {
+    public EPSTurtle(Turtle ghost, PrintStream out) {
         this.ghost = ghost;
-        this.out=out;
-        
+        this.out = out;
+
         this.printPSHeader();
     }
-    
-    public void plot(LSystem lsystem, int n_iter)
-    {
+
+    public void plot(LSystem lsystem, int n_iter) {
         ghost.push(); // save its position for computing BoundingBox
-        Iterator<Symbol> axiom = lsystem.getAxiom();
-        while (axiom.hasNext())
-        {
+        List<Symbol> axiom = lsystem.getAxiom();
+        while (axiom.hasNext()) {
             Symbol s = axiom.next();
             lsystem.tell(this, s, n_iter);
         }
@@ -71,75 +66,67 @@ public class EPSTurtle implements Turtle
 
         lsystem.resetRandomGenerator(); // to get the same random drawing for BoundingBox calculations
         ghost.pop();
-        Rectangle2D bbox = lsystem.getBoundingBox(ghost, lsystem.getAxiom(), n_iter); //getBoundingBox(n_iter) ;
+        Rectangle2D bbox = lsystem.getBoundingBox(ghost, lsystem.getAxiom(), n_iter); // getBoundingBox(n_iter) ;
 
         out.println("%%Trailer");
-        out.println("%%BoundingBox: "
-            +Integer.toString((int)bbox.getMinX())
-                    +" "+Integer.toString((int)bbox.getMinY())
-                    +" "+Integer.toString((int)bbox.getMaxX())
-                    +" "+Integer.toString((int)bbox.getMaxY()));
+        out.println("%%BoundingBox: " + Integer.toString((int) bbox.getMinX()) + " "
+                + Integer.toString((int) bbox.getMinY()) + " " + Integer.toString((int) bbox.getMaxX()) + " "
+                + Integer.toString((int) bbox.getMaxY()));
         out.println("%%EOF");
     }
-    
+
     /**
      * Called at initialization.
      */
-    private void printPSHeader()
-    {
+    private void printPSHeader() {
         out.println("%!PS-Adobe-3.0 EPSF-3.0");
         out.println("%%Title: L-system");
-        out.println("%%Creator: "+getClass().getName());
-        out.println("%%BoundingBox: (atend)"); // on va avoir un appel final à 
+        out.println("%%Creator: " + getClass().getName());
+        out.println("%%BoundingBox: (atend)"); // on va avoir un appel final à
         out.println("%%EndComments");
-        //out.println("/x { currentpoint stroke moveto } bind def % stroke + restart in same pos");
-        out.println("/M {moveto} bind def"); // synonyme 
-        out.println("/L {lineto} bind def"); // synonyme 
+        // out.println("/x { currentpoint stroke moveto } bind def % stroke + restart in
+        // same pos");
+        out.println("/M {moveto} bind def"); // synonyme
+        out.println("/L {lineto} bind def"); // synonyme
         out.println("0.5 setlinewidth"); // plus jolie
     }
-    
+
     private static final String POSITION_FORMAT = "%.1f %.1f";
-    
+
     /**
-     * Prints the {@link #ghost}'s current position on the PS output. 
+     * Prints the {@link #ghost}'s current position on the PS output.
      */
-    private void printPos()
-    {
+    private void printPos() {
         Point2D current_pos = ghost.getPosition();
-        out.printf(POSITION_FORMAT,current_pos.getX(),current_pos.getY());
+        out.printf(POSITION_FORMAT, current_pos.getX(), current_pos.getY());
     }
-    
+
     @Override
-    public void draw() 
-    {
+    public void draw() {
         ghost.draw();
         printPos();
         out.println(" L ");
     }
 
     @Override
-    public void move() 
-    {
+    public void move() {
         ghost.draw();
         printPos();
         out.println(" M ");
     }
 
     @Override
-    public void turnR() 
-    {
+    public void turnR() {
         ghost.turnR();
     }
 
     @Override
-    public void turnL() 
-    {
+    public void turnL() {
         ghost.turnL();
     }
 
     @Override
-    public void push() 
-    {
+    public void push() {
         out.println("stroke ");
         ghost.push();
         printPos();
@@ -147,8 +134,7 @@ public class EPSTurtle implements Turtle
     }
 
     @Override
-    public void pop() 
-    {
+    public void pop() {
         out.println("stroke ");
         ghost.pop();
         printPos();
@@ -156,35 +142,30 @@ public class EPSTurtle implements Turtle
     }
 
     @Override
-    public void stay() 
-    {
+    public void stay() {
         ghost.stay();
     }
 
     @Override
-    public void init(Point2D pos, double angle_deg) 
-    {
+    public void init(Point2D pos, double angle_deg) {
         ghost.init(pos, angle_deg);
         printPos();
-        out.println(" newpath moveto "); //% INIT "+ghost.getPosition()+", "+ghost.getAngle());
+        out.println(" newpath moveto "); // % INIT "+ghost.getPosition()+", "+ghost.getAngle());
     }
-    
+
     @Override
-    public Point2D getPosition() 
-    {
+    public Point2D getPosition() {
         return ghost.getPosition();
     }
 
     @Override
-    public double getAngle() 
-    {
+    public double getAngle() {
         return ghost.getAngle();
     }
 
     @Override
-    public void setUnits(double step, double delta) 
-    {
+    public void setUnits(double step, double delta) {
         ghost.setUnits(step, delta);
-        
+
     }
 }

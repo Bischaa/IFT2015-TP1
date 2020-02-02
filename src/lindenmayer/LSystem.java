@@ -7,10 +7,14 @@ import java.util.List;
 import java.awt.geom.Rectangle2D;
 
 public class LSystem extends AbstractLSystem {
-	public List<Symbol> alphabet = new ArrayList<Symbol>(); // Liste contenant l'alphabet
-	public HashMap<Symbol, List<String>> regles = new HashMap<Symbol, List<String>>(); // Contient les règles (symbol
-																						// -> [R1,R2,...])
-	public HashMap<Character, Symbol> charToSym = new HashMap<Character, Symbol>(); // Lien entre Symbol et charactère
+	protected List<Symbol> alphabet = new ArrayList<Symbol>(); // Liste contenant l'alphabet
+	protected HashMap<Symbol, List<String>> regles = new HashMap<Symbol, List<String>>(); // Contient les règles (symbol
+																							// -> [R1,R2,...])
+	protected HashMap<Character, Symbol> charToSym = new HashMap<Character, Symbol>(); // Lien entre Symbol et
+																						// charactère
+	protected HashMap<Symbol, String> symToAction = new HashMap<Symbol, String>(); // Lien entre un symbol et une action
+	private Iterator<Symbol> axiom; // Chaîne de départ (première règle de la
+									// grammaire)
 
 	// Méthode addSymbol;
 	public Symbol addSymbol(char sym) {
@@ -25,35 +29,45 @@ public class LSystem extends AbstractLSystem {
 		// Ajouter la règle à au tableau de référence
 
 		// Vérifie si regles contient des relations pour sym
-		if (regles.containsKey(sym)) {
+		if (this.regles.containsKey(sym)) {
 			// Si oui, cela signifie qu'il y a une liste d'instanciée
-			regles.get(sym).add(expansion); // Ajoute l'expansion aux règles reliées à ce symbole
+			this.regles.get(sym).add(expansion); // Ajoute l'expansion aux règles reliées à ce symbole
 		}
 
 		else {
 			// Si non, on instancie et ajoute le relation sym -> liste de règles
 			List<String> newList = new ArrayList<String>();
 			newList.add(expansion);
-			regles.put(sym, newList);
+			this.regles.put(sym, newList);
 		}
 	}
 
-	// Méthde addAction;
+	// Méthode setAction;
 	public void setAction(Symbol sym, String action) {
+		this.symToAction.put(sym, action); // On ajoute la relation au Map
 
 	}
 
-	// M�thode getAxiom;
+	// Méthode getAxiom;
 	public Iterator<Symbol> getAxiom() {
-		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
+		return this.axiom; // Retourne l'axiom
 	}
 
 	// Méthode setAxiom
 	public void setAxiom(String str) {
+		ArrayList<Symbol> newList = new ArrayList<Symbol>();
+		char inStr;
+		for (int i = 0; i < str.length(); i++) {
+			inStr = str.charAt(i);
 
+			if (Character.isLetter(inStr))
+				newList.add(new Symbol(inStr)); // Ajoute seulement si c'est une lettre
+		}
+
+		this.axiom = newList.iterator();
 	}
 
-	// M�thode rewrite;
+	// Méthode rewrite;
 	public Iterator<Symbol> rewrite(Symbol sym) {
 		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
 	}

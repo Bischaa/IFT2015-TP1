@@ -22,11 +22,29 @@ package lindenmayer;
  */
 public class Symbol {
     // Attributs
-    protected char sym;
+    private char sym;
 
     // Constructeur
     Symbol(char sym) {
         this.sym = sym;
+    }
+
+    // Méthode de comparaison
+    public boolean equals(Object other) {
+        if (other == this)
+            return true; // Vrai si l'objet est lui-même
+        if (other == null)
+            return false; // Faux si ce n'est pas un objet
+        if (getClass() != other.getClass())
+            return false; // Si ce n'est pas la même classe
+        Symbol symbol = (Symbol) other;
+        return this.sym == symbol.getChar(); // Les objets sont égaux si même caractère
+
+    }
+
+    // Méthode de get
+    public char getChar() {
+        return this.sym;
     }
 
 }
