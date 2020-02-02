@@ -3,7 +3,6 @@ package lindenmayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 import java.awt.geom.Rectangle2D;
 
@@ -106,13 +105,47 @@ public class LSystem extends AbstractLSystem {
 		}
 	}
 
-	// M�thode tell;
+	// Méthode tell pour la récursion;
 	public void tell(Turtle turtle, Symbol sym, int rounds) {
 
 	}
 
-	// Méthode tell
+	// Méthode tell qui se lance une seule fois
 	public void tell(Turtle turtle, Symbol sym) {
+		// draw, move, turnL, turnR, push, pop, stay
+
+		String action = symToAction.get(sym);
+
+		switch (action) {
+		case "draw":
+			turtle.draw();
+			break;
+
+		case "move":
+			turtle.move();
+			break;
+
+		case "turnL":
+			turtle.turnL();
+			break;
+
+		case "turnR":
+			turtle.turnR();
+			break;
+
+		case "push":
+			turtle.push();
+			break;
+
+		case "pop":
+			turtle.pop();
+			break;
+
+		default: // stay action
+			turtle.stay();
+			break;
+		}
+
 	}
 
 	// Méthode apply rule
