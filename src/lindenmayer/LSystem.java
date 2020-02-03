@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.Collections;
 import java.awt.geom.Rectangle2D;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
@@ -206,6 +207,11 @@ public class LSystem extends AbstractLSystem {
 	// Méthode apply rule
 	public Iterator<Symbol> applyRules(Iterator<Symbol> seq, int n) {
 		ArrayList<Symbol> list = new ArrayList<Symbol>();
+
+		if (n == 0) {
+			return seq;
+		}
+
 		// On observe la chaine S_i
 		while (seq.hasNext()) {
 			Symbol nextSymbol = seq.next();
@@ -233,19 +239,41 @@ public class LSystem extends AbstractLSystem {
 		Rectangle finalUnion = new Rectangle(); // Rectangle final
 
 		if (n == 0) {
-			return getBoundingRecur(turtle, seq);
+			return getBoundingRecur(turtle, applyRules(seq, n));
 		}
 
 		else {
-			finalUnion = (Rectangle) finalUnion.createUnion(getBoundingBox(turtle, seq, n - 1));
+			finalUnion = (Rectangle) finalUnion.createUnion(getBoundingBox(turtle, applyRules(seq, 1), n - 1));
 		}
+
+		// On voit qu'au final applyRules sera appliqué n fois sur seq
 
 		return (Rectangle2D) finalUnion; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
 	}
 
 	// Méthode pour la récursion de getBoundinBox
 	private Rectangle2D getBoundingRecur(Turtle turtle, Iterator<Symbol> seq) {
-		RunTurtle tortue = (RunTurtle) turtle;
+		ArrayList<Double> x_pos = new ArrayList<Double>(); // Pour stocker les positions en x
+		ArrayList<Double> y_pos = new ArrayList<Double>(); // Pour stocker les positions en y
 
+		x_pos.add(turtle.getPosition().getX()); // Ajout de la position initiale en x
+		y_pos.add(turtle.getPosition().getY()); // Ajout de la position initiale en y
+
+		// Boucle pour pouvoir effectuer le déplacement de la tortue sur la chaîne seq
+		while (seq.hasNext()) {
+			tell(turtle, seq.next());
+			x_pos.add(turtle.getPosition().getX()); // Ajout de la position x
+			y_pos.add(turtle.getPosition().getY()); // Ajout de la position y
+		}
+
+		int x_max = Collections.max(x_pos).intValue(); // Max de x
+		int y_max = Collections.max(y_pos).intValue(); // Max de y
+		int x_min = Collections.min(x_pos).intValue(); // Min de x
+		int y_min = Collections.min(y_pos).intValue(); // Min de y
+
+		int width = x_max - x_min; // Largeur du rectangle
+		int height = y_max - y_min; // Hauteur du rectangle
+
+		return (Rectangle2D) new Rectangle(width, height);
 	}
 }

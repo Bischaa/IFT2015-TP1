@@ -14,7 +14,7 @@ public class RunTurtle implements Turtle {
 	protected State active;
 	// Longueur du movement lors de move et draw;
 	private double step;
-	//Amplitude de l'angle du movement lors de turn;
+	// Amplitude de l'angle du movement lors de turn;
 	private double delta;
 
 	// Classe interne qui permet d'encapsuler l'�tat;
@@ -33,16 +33,16 @@ public class RunTurtle implements Turtle {
 	// On impl�mente la m�thode draw;
 	public void draw() {
 		double angle_rad = Math.toRadians(active.angle_degree);
-		active.position.setLocation(active.position.getX() + (step*Math.cos(angle_rad)),
-				active.position.getY() + (step*Math.asin(angle_rad)));
+		active.position.setLocation(active.position.getX() + (step * Math.cos(angle_rad)),
+				active.position.getY() + (step * Math.asin(angle_rad)));
 		// Draw line;
 	}
 
 	// On impl�mente la m�thode move;
 	public void move() {
 		double angle_rad = Math.toRadians(active.angle_degree);
-		active.position.setLocation(active.position.getX() + (step*Math.cos(angle_rad)),
-				active.position.getY() + (step*Math.asin(angle_rad)));
+		active.position.setLocation(active.position.getX() + (step * Math.cos(angle_rad)),
+				active.position.getY() + (step * Math.asin(angle_rad)));
 	}
 
 	// On impl�mente la m�thode turnR;
@@ -90,11 +90,5 @@ public class RunTurtle implements Turtle {
 		this.step = step;
 		this.delta = delta;
 	}
-	
-	public double[] getUnits() {
-		double[] units = new double[2];
-		units[0] = this.step;
-		units[1] = this.delta;
-		return units;
-	}
+
 }
