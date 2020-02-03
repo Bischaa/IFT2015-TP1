@@ -9,16 +9,20 @@ import java.util.Stack;
  */
 public class RunTurtle implements Turtle {
 	// Pile que l'on va utiliser pour les instruction push et pop;
-	Stack<State> pile = new Stack<State>();
+	protected Stack<State> pile = new Stack<State>();
 	// Instance du state activement utilis�;
-	State active;
+	protected State active;
+	// Longueur du movement lors de move et draw;
+	private double step;
+	//Amplitude de l'angle du movement lors de turn;
+	private double delta;
 
 	// Classe interne qui permet d'encapsuler l'�tat;
 	public class State {
 		// Position du nez de la tortue.
-		Point2D position;
+		public Point2D position;
 		// Angle de la tortue en degr�s.
-		double angle_degree;
+		public double angle_degree;
 
 		public State(Point2D pos, double angle) {
 			this.position = pos;
@@ -29,26 +33,26 @@ public class RunTurtle implements Turtle {
 	// On impl�mente la m�thode draw;
 	public void draw() {
 		double angle_rad = Math.toRadians(active.angle_degree);
-		active.position.setLocation(active.position.getX() + Math.cos(angle_rad),
-				active.position.getY() + Math.asin(angle_rad));
+		active.position.setLocation(active.position.getX() + (step*Math.cos(angle_rad)),
+				active.position.getY() + (step*Math.asin(angle_rad)));
 		// Draw line;
 	}
 
 	// On impl�mente la m�thode move;
 	public void move() {
 		double angle_rad = Math.toRadians(active.angle_degree);
-		active.position.setLocation(active.position.getX() + Math.cos(angle_rad),
-				active.position.getY() + Math.asin(angle_rad));
+		active.position.setLocation(active.position.getX() + (step*Math.cos(angle_rad)),
+				active.position.getY() + (step*Math.asin(angle_rad)));
 	}
 
 	// On impl�mente la m�thode turnR;
 	public void turnR() {
-		active.angle_degree += -45;
+		active.angle_degree += -delta;
 	}
 
 	// On impl�mente la m�thode turnL;
 	public void turnL() {
-		active.angle_degree += 45;
+		active.angle_degree += delta;
 	}
 
 	// On impl�mente la m�thode push;
@@ -83,6 +87,14 @@ public class RunTurtle implements Turtle {
 	}
 
 	public void setUnits(double step, double delta) {
-
+		this.step = step;
+		this.delta = delta;
+	}
+	
+	public double[] getUnits() {
+		double[] units = new double[2];
+		units[0] = this.step;
+		units[1] = this.delta;
+		return units;
 	}
 }

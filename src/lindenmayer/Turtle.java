@@ -85,4 +85,6 @@ public interface Turtle
      * @param delta unit angle change in degrees (for turnR and turnL)
      */
     public void setUnits(double step, double delta);
+    //*********
+    public double[] getUnits();
 }    
