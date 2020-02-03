@@ -116,7 +116,12 @@ public class LSystem extends AbstractLSystem {
 		if(rounds == 0) {
 			tell(turtle, sym);
 		}
-		else {}
+		else {
+			Iterator<Symbol> iter = rewrite(sym);
+			while(iter.hasNext()) {
+				tell(turtle, iter.next(), rounds-1);
+			}
+		}
 	}
 
 	// Méthode tell qui se lance une seule fois
