@@ -165,6 +165,8 @@ public class EPSTurtle implements Turtle {
     @Override
     public void setUnits(double step, double delta) {
         ghost.setUnits(step, delta);
-
+    }
+    public double[] getUnits() {
+    	return ghost.getUnits();
     }
 }

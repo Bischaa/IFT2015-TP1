@@ -113,7 +113,10 @@ public class LSystem extends AbstractLSystem {
 
 	// MÃ©thode tell pour la rÃ©cursion;
 	public void tell(Turtle turtle, Symbol sym, int rounds) {
-
+		if(rounds == 0) {
+			tell(turtle, sym);
+		}
+		else {}
 	}
 
 	// MÃ©thode tell qui se lance une seule fois
@@ -199,7 +202,28 @@ public class LSystem extends AbstractLSystem {
 
 	// MÃ©thode apply rule
 	public Iterator<Symbol> applyRules(Iterator<Symbol> seq, int n) {
-		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
+		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		//On observe la chaine S_i
+		while(seq.hasNext()) {
+			Symbol nextSymbol = seq.next();
+			if(this.regles.containsKey(nextSymbol)) {
+				//On choisi une règle a appliquer au symbole
+				Iterator<Symbol> rule = rewrite(nextSymbol);
+				while(rule.hasNext()) {
+					//On ajoute à la liste chaque nouveau symbole dans la règle
+					list.add(rule.next());
+				}
+			}
+		}
+		//On transforme notre liste en chaine S_i+1
+		Iterator<Symbol> iter = list.iterator();
+		//Condition d'arrêt, lorsque n=1, on a fait la boucle n fois.
+		if(n == 1) {
+			return iter;
+		}
+		else {
+			return applyRules(iter,n-1);
+		}
 	}
 
 	// MÃ©thode getBoundingBox
