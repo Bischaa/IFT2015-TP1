@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import java.awt.geom.Rectangle2D;
+import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.Point;
 
@@ -113,21 +114,18 @@ public class LSystem extends AbstractLSystem {
 
 	// Méthode tell pour la récursion;
 	public void tell(Turtle turtle, Symbol sym, int rounds) {
-		if(rounds == 0) {
+		if (rounds == 0) {
 			tell(turtle, sym);
-		}
-		else {
+		} else {
 			Iterator<Symbol> iter = rewrite(sym);
-			while(iter.hasNext()) {
-				tell(turtle, iter.next(), rounds-1);
+			while (iter.hasNext()) {
+				tell(turtle, iter.next(), rounds - 1);
 			}
 		}
 	}
 
 	// Méthode tell qui se lance une seule fois
 	public void tell(Turtle turtle, Symbol sym) {
-		// draw, move, turnL, turnR, push, pop, stay
-
 		String action = symToAction.get(sym);
 
 		switch (action) {
@@ -208,31 +206,46 @@ public class LSystem extends AbstractLSystem {
 	// Méthode apply rule
 	public Iterator<Symbol> applyRules(Iterator<Symbol> seq, int n) {
 		ArrayList<Symbol> list = new ArrayList<Symbol>();
-		//On observe la chaine S_i
-		while(seq.hasNext()) {
+		// On observe la chaine S_i
+		while (seq.hasNext()) {
 			Symbol nextSymbol = seq.next();
-			if(this.regles.containsKey(nextSymbol)) {
-				//On choisi une r�gle a appliquer au symbole
+			if (this.regles.containsKey(nextSymbol)) {
+				// On choisi une règle a appliquer au symbole
 				Iterator<Symbol> rule = rewrite(nextSymbol);
-				while(rule.hasNext()) {
-					//On ajoute � la liste chaque nouveau symbole dans la r�gle
+				while (rule.hasNext()) {
+					// On ajoute à la liste chaque nouveau symbole dans la règle
 					list.add(rule.next());
 				}
 			}
 		}
-		//On transforme notre liste en chaine S_i+1
+		// On transforme notre liste en chaine S_i+1
 		Iterator<Symbol> iter = list.iterator();
-		//Condition d'arr�t, lorsque n=1, on a fait la boucle n fois.
-		if(n == 1) {
+		// Condition d'arrêt, lorsque n=1, on a fait la boucle n fois.
+		if (n == 1) {
 			return iter;
-		}
-		else {
-			return applyRules(iter,n-1);
+		} else {
+			return applyRules(iter, n - 1);
 		}
 	}
 
 	// Méthode getBoundingBox
 	public Rectangle2D getBoundingBox(Turtle turtle, Iterator<Symbol> seq, int n) {
-		return null; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
+		Rectangle finalUnion = new Rectangle(); // Rectangle final
+
+		if (n == 0) {
+			return getBoundingRecur(turtle, seq);
+		}
+
+		else {
+			finalUnion = (Rectangle) finalUnion.createUnion(getBoundingBox(turtle, seq, n - 1));
+		}
+
+		return (Rectangle2D) finalUnion; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
+	}
+
+	// Méthode pour la récursion de getBoundinBox
+	private Rectangle2D getBoundingRecur(Turtle turtle, Iterator<Symbol> seq) {
+		RunTurtle tortue = (RunTurtle) turtle;
+
 	}
 }
