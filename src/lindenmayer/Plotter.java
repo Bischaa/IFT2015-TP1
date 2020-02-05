@@ -102,8 +102,11 @@ public class Plotter {
         this.lsystem = new LSystem();
         this.turtle = new EPSTurtle(new RunTurtle(), out);
 
-        JSONObject params = new JSONObject(new JSONTokener(new java.io.FileReader(json_file)));
-        parseLSystem(params);
+        /*
+         * JSONObject params = new JSONObject(new JSONTokener(new
+         * java.io.FileReader(json_file))); parseLSystem(params);
+         */
+        LSystem.readJSONFile(json_file, this.lsystem, turtle);
 
         turtle.plot(lsystem, n_iter);
     }

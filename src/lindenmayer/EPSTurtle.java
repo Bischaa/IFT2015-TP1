@@ -59,6 +59,7 @@ public class EPSTurtle implements Turtle {
         Iterator<Symbol> axiom = lsystem.getAxiom();
         while (axiom.hasNext()) {
             Symbol s = axiom.next();
+            System.out.println(s.getChar());
             lsystem.tell(this, s, n_iter);
         }
         out.println("stroke");

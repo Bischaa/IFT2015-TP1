@@ -34,7 +34,7 @@ public class RunTurtle implements Turtle {
 	public void draw() {
 		double angle_rad = Math.toRadians(active.angle_degree);
 		active.position.setLocation(active.position.getX() + (step * Math.cos(angle_rad)),
-				active.position.getY() + (step * Math.asin(angle_rad)));
+				active.position.getY() + (step * Math.sin(angle_rad)));
 		// Draw line;
 	}
 
@@ -42,7 +42,7 @@ public class RunTurtle implements Turtle {
 	public void move() {
 		double angle_rad = Math.toRadians(active.angle_degree);
 		active.position.setLocation(active.position.getX() + (step * Math.cos(angle_rad)),
-				active.position.getY() + (step * Math.asin(angle_rad)));
+				active.position.getY() + (step * Math.sin(angle_rad)));
 	}
 
 	// On impl�mente la m�thode turnR;
@@ -74,8 +74,7 @@ public class RunTurtle implements Turtle {
 
 	public void init(Point2D pos, double angle_deg) {
 		active = new State(pos, angle_deg);
-		active.position.setLocation(0, 0);
-		active.angle_degree = 0;
+
 	}
 
 	public Point2D getPosition() {

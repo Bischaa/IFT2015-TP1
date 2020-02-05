@@ -127,10 +127,11 @@ public abstract class AbstractLSystem {
     /**
      * Initializes this instance from a file. Implementing classes may prefer a
      * static method.
+     *
+     * protected void readJSONFile(String filename, Turtle turtle) throws
+     * java.io.IOException { throw new java.lang.UnsupportedOperationException("If
+     * you want this you have to implement it."); }
      */
-    protected void readJSONFile(String filename, Turtle turtle) throws java.io.IOException {
-        throw new java.lang.UnsupportedOperationException("If you want this you have to implement it.");
-    }
 
     /**
      * Starting sequence.

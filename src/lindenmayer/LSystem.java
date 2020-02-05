@@ -26,6 +26,7 @@ public class LSystem extends AbstractLSystem {
 																						// charactère
 	protected HashMap<Symbol, String> symToAction = new HashMap<Symbol, String>(); // Lien entre un symbol et une action
 	private ArrayList<Symbol> axiom = new ArrayList<Symbol>(); // Chaîne de départ
+	protected Symbol[] rulesAssociation; // Pour la comparaison avec les symbol
 
 	// Méthode de conversion de string à iterator
 	public Iterator<Symbol> stringToIterator(String str) {
@@ -92,17 +93,30 @@ public class LSystem extends AbstractLSystem {
 	// Méthode rewrite;
 	public Iterator<Symbol> rewrite(Symbol sym) {
 
-		int numRules = this.regles.get(sym).size();
-
-		if (!this.regles.containsKey(sym)) {
-			return null; // Retourne null si aucune règle reliée à ce symbole
+		int numRules = 0; // Nombre de règles reliées à un symbol
+		Symbol goodSym;
+		for (int i = 0; i < this.rulesAssociation.length; i++) {
+			goodSym = this.rulesAssociation[i];
+			if (sym.equals(goodSym)) {
+				sym = goodSym;
+			}
 		}
 
-		else if (numRules == 0) { // Vérifie si aucune règle reliée
-			return null;
+		try {
+			numRules = this.regles.get(sym).size();
+		} catch (NullPointerException e) {
+			ArrayList<Symbol> symReturn = new ArrayList<Symbol>();
+			symReturn.add(sym);
+			return symReturn.iterator();
 		}
 
-		else if (numRules == 1) { // Vérifie s'il y a une seule règle
+		if (numRules == 0) { // S'il n'y a toujours pas de règles associées
+			ArrayList<Symbol> symReturn = new ArrayList<Symbol>();
+			symReturn.add(sym);
+			return symReturn.iterator();
+		}
+
+		if (numRules == 1) { // Vérifie s'il y a une seule règle
 			return this.regles.get(sym).get(0);
 		}
 
@@ -120,43 +134,47 @@ public class LSystem extends AbstractLSystem {
 		} else {
 			Iterator<Symbol> iter = rewrite(sym);
 			while (iter.hasNext()) {
-				tell(turtle, iter.next(), rounds - 1);
+				Symbol s = iter.next();
+				tell(turtle, s, rounds - 1);
 			}
 		}
 	}
 
 	// Méthode tell qui se lance une seule fois
 	public void tell(Turtle turtle, Symbol sym) {
-		String action = symToAction.get(sym);
+		String action = this.symToAction.get(sym);
+		try {
+			switch (action) {
+			case "draw":
+				turtle.draw();
+				break;
 
-		switch (action) {
-		case "draw":
-			turtle.draw();
-			break;
+			case "move":
+				turtle.move();
+				break;
 
-		case "move":
-			turtle.move();
-			break;
+			case "turnL":
+				turtle.turnL();
+				break;
 
-		case "turnL":
-			turtle.turnL();
-			break;
+			case "turnR":
+				turtle.turnR();
+				break;
 
-		case "turnR":
-			turtle.turnR();
-			break;
+			case "push":
+				turtle.push();
+				break;
 
-		case "push":
-			turtle.push();
-			break;
+			case "pop":
+				turtle.pop();
+				break;
 
-		case "pop":
-			turtle.pop();
-			break;
-
-		default: // stay action
-			turtle.stay();
-			break;
+			default: // stay action
+				turtle.stay();
+				break;
+			}
+		} catch (NullPointerException e) {
+			// Ne rien faire s'il n'y a pas de symbole
 		}
 
 	}
@@ -174,10 +192,11 @@ public class LSystem extends AbstractLSystem {
 		turtle.setUnits(params.getDouble("step"), params.getDouble("angle")); // Initialisation des unités
 
 		// Initialisation du point et de l'angle de départ de la tortue
-		double[] start = (double[]) input.get("start");
-		turtle.init((Point2D) new Point((int) start[0], (int) start[1]), start[2]);
+		JSONArray start = params.getJSONArray("start");
+		turtle.init((Point2D) new Point(start.getInt(0), start.getInt(1)), start.getDouble(2));
 
 		system.setAxiom(axiom); // On place l'axiom dans le système
+		JSONArray letterRules;
 		for (int i = 0; i < alphabet.length(); i++) {
 			String letter = alphabet.getString(i);
 			Symbol sym = system.addSymbol(letter.charAt(0)); // Ajout à l'alphabet
@@ -185,22 +204,23 @@ public class LSystem extends AbstractLSystem {
 			// RENDU-LÀ On doit faire les associations sym->action, sym->règles
 
 			// Pour les règles
-			JSONArray letterRules = rules.getJSONArray(letter);
-			if (letterRules != null) { // S'il y a une correspondance pour les règles
+			try { // S'il y a une correspondance pour les règles
+				letterRules = rules.getJSONArray(letter);
+
 				for (int j = 0; j < letterRules.length(); j++) {
 					system.addRule(sym, letterRules.getString(i)); // Ajoute la règle
 				}
-			}
 
-			// Pour les actions
-			try {
-				system.setAction(sym, actions.getString(letter)); // Fait l'association sym->action
-
-			} catch (NullPointerException e) {
+			} catch (org.json.JSONException e) {
 				// Ne rien faire s'il n'y a pas de correspondance
 			}
 
+			// Pour les actions
+			system.setAction(sym, actions.getString(letter)); // Fait l'association sym->action
+
 		}
+
+		system.rulesAssociation = system.regles.keySet().toArray(new Symbol[system.regles.keySet().size()]);
 
 	}
 
@@ -208,30 +228,44 @@ public class LSystem extends AbstractLSystem {
 	public Iterator<Symbol> applyRules(Iterator<Symbol> seq, int n) {
 		ArrayList<Symbol> list = new ArrayList<Symbol>();
 
-		if (n == 0) {
+		if (n == 0) { // On retourne la séquence sans modification
 			return seq;
 		}
 
 		// On observe la chaine S_i
 		while (seq.hasNext()) {
-			Symbol nextSymbol = seq.next();
-			if (this.regles.containsKey(nextSymbol)) {
-				// On choisi une règle a appliquer au symbole
-				Iterator<Symbol> rule = rewrite(nextSymbol);
-				while (rule.hasNext()) {
-					// On ajoute à la liste chaque nouveau symbole dans la règle
-					list.add(rule.next());
+			try {
+				Symbol nextSymbol = seq.next();
+				Symbol goodSym;
+				for (int i = 0; i < this.rulesAssociation.length; i++) {
+					goodSym = this.rulesAssociation[i];
+					if (nextSymbol.equals(goodSym)) {
+						nextSymbol = goodSym;
+					}
+				}
+				if (this.regles.containsKey(nextSymbol)) {
+					// On choisi une règle a appliquer au symbole
+					Iterator<Symbol> rule = rewrite(nextSymbol);
+					while (rule.hasNext()) {
+						// On ajoute à la liste chaque nouveau symbole dans la règle
+						list.add(rule.next());
+					}
+				}
+			} catch (NullPointerException e) {
+				// while fini
+				// On transforme notre liste en chaine S_i+1
+				Iterator<Symbol> iter = list.iterator();
+				// Condition d'arrêt, lorsque n=1, on a fait la boucle n fois.
+				if (n == 1) {
+					return iter;
+				} else {
+					return applyRules(iter, n - 1);
 				}
 			}
 		}
-		// On transforme notre liste en chaine S_i+1
-		Iterator<Symbol> iter = list.iterator();
-		// Condition d'arrêt, lorsque n=1, on a fait la boucle n fois.
-		if (n == 1) {
-			return iter;
-		} else {
-			return applyRules(iter, n - 1);
-		}
+
+		return seq; // Ne va jamais se rendre
+
 	}
 
 	// Méthode getBoundingBox
@@ -243,12 +277,11 @@ public class LSystem extends AbstractLSystem {
 		}
 
 		else {
-			finalUnion = (Rectangle) finalUnion.createUnion(getBoundingBox(turtle, applyRules(seq, 1), n - 1));
+			return finalUnion.createUnion(getBoundingBox(turtle, applyRules(seq, 1), n - 1));
 		}
 
 		// On voit qu'au final applyRules sera appliqué n fois sur seq
 
-		return (Rectangle2D) finalUnion; // en attendant d'avoir la vraie fonction pour retirer l'erreur de retour
 	}
 
 	// Méthode pour la récursion de getBoundinBox
